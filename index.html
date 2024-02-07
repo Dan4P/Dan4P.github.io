@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Input Model</title>
+        <link rel="stylesheet" href ="index.css">
+    </head>
+    <body>
+        <div id = "topBar">
+            <a id = "backButton"href="history.back()"><- Go Back</a>
+        </div>
+        <div id ="content">
+            <h3 id = "subTitle">Input Model</h3>
+            <p id = "explanation">Create and train your model in https://ml-machine.org/. Save your model and then drag and drop your file into the box here.</p>
+        </div>
+        <div id = "fileInputSpace" >
+                <p id = "inputHereMes">Drag and drop files here</p>
+                <p id = "inputFileMes">Empty</p>
+        </div>
+    </body>
+    <script>
+        let dropEl = document.getElementById("fileInputSpace");
+
+
+
+        dropEl.addEventListener("drop", event => {
+            let file = event.dataTransfer.files[0]
+            document.getElementById("inputFileMes").textContent = file.name;
+            console.log(file);
+        });
+
+        ["drag", "dragstart", "dragend", "dragover", "dragenter", "dragleave", "drop"].forEach(eventName => {
+            dropEl.addEventListener(eventName, event => {
+                event.preventDefault();
+                event.stopPropagation();
+            });
+        });
+
+        ["dragover", "dragenter"].forEach(eventName => {
+            dropEl.addEventListener(eventName, event => {
+                dropEl.classList.add("hover");
+            });
+        });
+
+        ["dragleave", "dragend", "drop"].forEach(eventName => {
+            dropEl.addEventListener(eventName, event => {
+                dropEl.classList.remove("hover");
+            });
+        });
+
+    </script>
+</html>
