@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Input Model</title>
+        <link rel="stylesheet" href ="index.css">
+    </head>
+    <body>
+        <div id = "topBar">
+            <a id = "backButton"href="history.back()"><- Go Back</a>
+        </div>
+        <div id ="content">
+            <h3 id = "subTitle">Input Model</h3>
+            <p id = "explanation">Create and train your model in https://ml-machine.org/. Save your model and then drag and drop your file into the box here.</p>
+        </div>
+        <div id = "fileInputSpace" >
+                <p id = "inputHereMes">Drag and drop files here</p>
+                <p id = "inputFileMes">Empty</p>
+        </div>
+    </body>
+    <script>
+        let dropEl = document.getElementById("fileInputSpace");
+
+
+//https://stackoverflow.com/questions/22659164/read-a-drag-and-dropped-file
+//https://www.javascripture.com/FileReader
+//https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsText
+//will probably need to add checks to make sure that the file is in the format that is it supposed to be 
+        dropEl.addEventListener("drop", event => {
+            let file = event.dataTransfer.files[0];
+            document.getElementById("inputFileMes").textContent = file.name;
+            console.log(file);
+            console.log(file.size);
+            reader = new FileReader()
+            reader.onload = function(event){
+                console.log(reader.result);
+            }
+            reader.readAsText(file)
+            //now to training the model
+            
+        });
+
+        ["drag", "dragstart", "dragend", "dragover", "dragenter", "dragleave", "drop"].forEach(eventName => {
+            dropEl.addEventListener(eventName, event => {
+                event.preventDefault();
+                event.stopPropagation();
+            });
+        });
+
+        ["dragover", "dragenter"].forEach(eventName => {
+            dropEl.addEventListener(eventName, event => {
+                dropEl.classList.add("hover");
+            });
+        });
+
+        ["dragleave", "dragend", "drop"].forEach(eventName => {
+            dropEl.addEventListener(eventName, event => {
+                dropEl.classList.remove("hover");
+            });
+        });
+
+    </script>
+</html>
