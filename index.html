@@ -19,22 +19,13 @@
     <script>
         let dropEl = document.getElementById("fileInputSpace");
         var extId = window.location.hash.substr(1);
-
-        var msg = {
-                id: Math.random().toString(),
-                type: "pxtpkgext",
-                action: "extwritecode",
-                extId: extId,
-                response: "true",
-                body: {
-                    code: "main.ts",
-                    json: "pxt.json"
-                }
-            }
+        var array = [];
 
         function tryAddBlock(){
             console.log("Try add block entered")
             //trying for communication between editor and extension 
+            console.log(array[0])
+            console.log(array[1])
             var msg = {
                 id: Math.random().toString(),
                 type: "pxtpkgext",
@@ -42,12 +33,12 @@
                 extId: extId,
                 response: "true",
                 body: {
-                    code: ts,
-                    json: JSON.stringify(extCode, null, 2)
+                    code: array[0],
+                    json: JSON.stringify(array[1], null, 2)
                 }
             }
-            console.log()
             window.parent.postMessage(msg, "*")
+            
 
         }
 
@@ -61,19 +52,8 @@
             reader = new FileReader()
             reader.onload = function(event){
                 console.log(reader.result);
-                var msg = {
-                    id: Math.random().toString(),
-                    type: "pxtpkgext",
-                    action: "extwritecode",
-                    extId: extId,
-                    response: "true",
-                    body: {
-                        code: ts,
-                        json: JSON.stringify(reader.result, null, 2)
-                    }
-                }
-                window.parent.postMessage(msg, "*")
-
+                array.push(reader.result)
+                
             }
             reader.readAsText(file)
            
