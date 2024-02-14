@@ -11,6 +11,7 @@
         <div id ="content">
             <h3 id = "subTitle">Input Model</h3>
             <p id = "explanation">Create and train your model in https://ml-machine.org/. Save your model and then drag and drop your file into the box here.</p>
+            <p id ="testButton" onclick = "tryAddBlock()">Test Button</p>
         </div>
         <div id = "fileInputSpace" >
                 <p id = "inputHereMes">Drag and drop files here</p>
@@ -20,10 +21,23 @@
     <script>
         let dropEl = document.getElementById("fileInputSpace");
 
+        function tryAddBlock(){
+            console.log("Try add block entered")
+            var extId = window.location.hash.substr(1);
+            //trying for communication between editor and extension 
+            var msg = {
+                id: Math.random().toString(),
+                type: "pxtpkgext",
+                action: "extwritecode",
+                extId: extId,
+                body: {
+                    code: "main.ts",
+                    json: "pxt.json"
+                }
+            }
 
-//https://stackoverflow.com/questions/22659164/read-a-drag-and-dropped-file
-//https://www.javascripture.com/FileReader
-//https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsText
+        }
+
 //will probably need to add checks to make sure that the file is in the format that is it supposed to be 
         dropEl.addEventListener("drop", event => {
             let file = event.dataTransfer.files[0];
@@ -35,7 +49,6 @@
                 console.log(reader.result);
             }
             reader.readAsText(file)
-            //now to training the model
             
         });
 
