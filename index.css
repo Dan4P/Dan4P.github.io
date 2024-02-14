@@ -5,16 +5,7 @@ body{
     padding: 0px;
     margin: 0;
 }
-#topBar{
-    background-color: rgb(52,84,209);
-    grid-column-start: 1;
-    grid-column-end: 9;
-    grid-row-start: 1;
-    grid-row-end: 2;
-    height: 170%;
-    margin:0;
 
-}
 #buttonText{
     padding: 0px 0px;
 
@@ -29,6 +20,12 @@ a:link{
 a:link:hover{
     background-color: rgb(47, 75, 188);
     
+}
+#testButton{
+    border: solid;
+}
+#testButton:hover{
+    border: dashed;
 }
 
 
