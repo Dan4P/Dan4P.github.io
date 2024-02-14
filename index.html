@@ -18,16 +18,28 @@
     </body>
     <script>
         let dropEl = document.getElementById("fileInputSpace");
+        var extId = window.location.hash.substr(1);
+        var msg = {
+                id: Math.random().toString(),
+                type: "pxtpkgext",
+                action: "extwritecode",
+                extId: extId,
+                response: "true",
+                body: {
+                    code: "main.ts",
+                    json: "pxt.json"
+                }
+            }
 
         function tryAddBlock(){
             console.log("Try add block entered")
-            var extId = window.location.hash.substr(1);
             //trying for communication between editor and extension 
             var msg = {
                 id: Math.random().toString(),
                 type: "pxtpkgext",
                 action: "extwritecode",
                 extId: extId,
+                response: "true",
                 body: {
                     code: "main.ts",
                     json: "pxt.json"
