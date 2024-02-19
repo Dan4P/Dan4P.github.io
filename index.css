@@ -23,9 +23,16 @@ a:link:hover{
 }
 #testButton{
     border: solid;
+    background-color: rgb(52, 84, 209);
+    color: white;
+    grid-column-start: 1;
+    grid-column-end: 3;
+    grid-row-start: 2;
+    grid-row-end:6;
 }
 #testButton:hover{
     border: dashed;
+    background-color: rgb(47, 75, 188);
 }
 
 
@@ -46,3 +53,8 @@ a:link:hover{
     text-align: center;
     margin: 10px;
 }
+#fileInputSpace:hover{
+    background-color: rgba(32 121 189 / 50%);
+
+}
+
