@@ -9,7 +9,8 @@
         <div id ="content">
             <h3 id = "subTitle">Input Model</h3>
             <p id = "explanation">Create and train your model in https://ml-machine.org/. Save your model and then drag and drop your file into the box here.</p>
-            <p id ="testButton" onclick = "tryAddBlock()">Test Button 6</p>
+            <p>Current functionallity: Drag and drop the two files into the file drop space and then select the 'Create Blocks' button. The two files should be the .ts typescript file first, and then the .json file.</p>
+            <p id ="testButton" onclick = "tryAddBlock()">Create Blocks</p>
         </div>
         <div id = "fileInputSpace" >
                 <p id = "inputHereMes">Drag and drop files here</p>
@@ -39,7 +40,6 @@
             }
             window.parent.postMessage(msg, "*")
             
-
         }
 
 //will probably need to add checks to make sure that the file is in the format that is it supposed to be 
@@ -56,8 +56,6 @@
                 
             }
             reader.readAsText(file)
-           
-            
         });
 
         ["drag", "dragstart", "dragend", "dragover", "dragenter", "dragleave", "drop"].forEach(eventName => {
