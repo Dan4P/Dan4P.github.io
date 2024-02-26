@@ -1,0 +1,76 @@
+body{
+    background-color: white;
+    display: grid;
+    gap: 50px 50px;
+    padding: 0px;
+    margin: 0;
+}
+
+#buttonText{
+    padding: 0px 0px;
+
+}
+a:link{
+    text-decoration: none;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 180%;
+    
+}
+a:link:hover{
+    background-color: rgb(47, 75, 188);
+    
+}
+#testButton{
+    border: solid;
+    background-color: rgb(52, 84, 209);
+    color: white;
+    grid-column-start: 1;
+    grid-column-end: 3;
+    grid-row-start: 2;
+    grid-row-end:6;
+}
+#testButton:hover{
+    border: dashed;
+    background-color: rgb(47, 75, 188);
+}
+#JSONButton{
+    border: solid;
+    background-color: rgb(52, 84, 209);
+    color: white;
+}
+#JSONButton:hover{
+    border: dashed;
+    background-color: rgb(47, 75, 188);
+}
+#printModel{
+    border: solid;
+    background-color: rgb(52, 84, 209);
+    color: white;
+}
+#printModel:hover{
+    border: dashed;
+    background-color: rgb(47, 75, 188);
+}
+
+#content{
+    border-style: outset;
+    grid-column-start: 1;
+    grid-column-end: 9;
+    grid-row-start: 2;
+    grid-row-end:6;
+    margin: 10px;
+}
+#fileInputSpace{
+    border-style: dashed;
+    grid-column-start: 1;
+    grid-column-end: 9;
+    grid-row-start: 7;
+    grid-row-end:12;
+    text-align: center;
+    margin: 10px;
+}
+#fileInputSpace:hover{
+    background-color: rgba(32 121 189 / 50%);
+
+}

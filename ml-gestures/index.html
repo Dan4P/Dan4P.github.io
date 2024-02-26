@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Input Model</title>
+        <link rel="stylesheet" href ="index.css">
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    </head>
+    <body>
+
+        <div id ="content">
+            <h3 id = "subTitle">Input Model</h3>
+            <p id = "explanation">Create and train your model in https://ml-machine.org/. Save your model and then drag and drop your file into the box here.</p>
+            <p>Current functionallity: Drag and drop the two files into the file drop space and then select the 'Create Blocks' button. The two files should be the .ts typescript file first, and then the .json file.</p>
+            <p id ="testButton" onclick = "tryAddBlock()">Create Blocks</p>
+            <p id ="JSONButton" onclick = "parseJSON()">Parse JSON</p>
+        </div>
+        <div id = "fileInputSpace" >
+                <p id = "inputHereMes">Drag and drop files here</p>
+                <p id = "inputFileMes">Empty</p>
+        </div>
+    </body>
+    <script>
+        let dropEl = document.getElementById("fileInputSpace");
+        var extId = window.location.hash.substr(1);
+        var array = [];
+        let model = null;
+
+        function tryAddBlock(){
+            console.log("Try add block entered")
+            //trying for communication between editor and extension 
+            console.log(array[0])
+            console.log(array[1])
+            var msg = {
+                id: Math.random().toString(),
+                type: "pxtpkgext",
+                action: "extwritecode",
+                extId: extId,
+                response: "true",
+                body: {
+                    code: array[0],
+                    json: JSON.stringify(array[1], null, 2)
+                }
+            }
+            window.parent.postMessage(msg, "*")
+        }
+        //error you are currently getting is your values are being overwritten and min and max are returning null
+        //seems like the values that you can see are correct
+        function parseJSON(){
+            const obj = JSON.parse(array[0]);
+            logData(obj);
+            let [collected, labels] = collectData(obj)
+            console.log(collected)
+            //collected contains list of records([x,y,z]) so will need to loop through this once working
+            let features = []
+            for (let i =0;i<collected.length;i++){
+                features.push(applyFilters(collected[i]))
+            }
+            
+            console.log("data to apply filters to: ",collected[0])
+            console.log("features: ", features)
+            console.log("labels: ", labels)
+            model = trainModel(features, labels, obj)
+        }
+        function logData(obj){
+            console.log(obj)
+            for (let i=0;i<obj.length;i++){
+                console.log(obj[i].name)
+                console.log("No. of recordings: ", obj[i].recordings.length)
+            }
+            console.log("obj.length: ",obj.length)
+            console.log("obj[i].recordings.length: ",obj[0].recordings.length)
+
+
+        }
+        async function trainModel(features, labels, obj){
+            const tensorFeatures = tf.tensor(features);
+            const tensorLabels = tf.tensor(labels);
+
+            // hardcoded but value should never change 
+            const inputShape = [24];
+
+            const input = tf.input({ shape: inputShape });
+            //console.log("input: ",input)
+            const normalizer = tf.layers.batchNormalization().apply(input);
+            const dense = tf.layers
+            .dense({ units: 16, activation: 'relu' })
+            .apply(normalizer);
+            const softmax = tf.layers
+            .dense({ units: obj.length, activation: 'softmax' })
+            .apply(dense);
+
+            const model = tf.model({ inputs: input, outputs: softmax });
+
+            model.compile({
+            loss: 'categoricalCrossentropy',
+            optimizer: tf.train.sgd(0.5),
+            metrics: ['accuracy'],
+            });
+
+            await model
+            .fit(tensorFeatures, tensorLabels, {
+                epochs: 80,
+                batchSize: 16,
+                validationSplit: 0.1,
+            })
+            .catch(err => {
+                console.error('tensorflow training process failed:', err);
+                return Promise.reject(err);
+            });
+            console.log("model Trained")
+            console.log("model: ",model)
+            return Promise.resolve(model);
+        }
+        //can make another function called collect records that will get the data from the JSON in the correct format for the apply filters function 
+        //want this to output a 2D array 1[x,y,z], 2[x,y,z], 3[x,y,z]...
+        function collectData(obj){
+            var collection = [];
+            let labels =[];//new Array(obj.length);
+            //loop through each gesture ID
+            for (let i =0;i<obj.length;i++){
+                //loop through each recording 
+                for (let k =0;k<obj[i].recordings.length;k++){
+                    var recordings = [];
+                    recordings.push(obj[i].recordings[k].data.x);
+                    recordings.push(obj[i].recordings[k].data.y);
+                    recordings.push(obj[i].recordings[k].data.z);
+                    //console.log("recordings: ", recordings)
+                    collection.push(recordings)
+                    //console.log("current collection state: ",collection)
+                    let newLabel = new Array(obj.length).fill(0)
+                    newLabel[i] = 1
+                    labels.push(newLabel)
+
+                }
+            }
+            console.log("collection: ",collection)
+            return [collection, labels];
+
+        }
+        function setListToInt(arr){
+            var numArr = []
+            console.log|("arr: ",arr)
+            for (let i =0;i<arr.length;i++){
+                numArr.push(parseInt(arr[i]))
+            }
+            console.log("numArr: ",numArr)
+            return numArr
+        }
+        //function to be used per recording 
+        function applyFilters(list){
+            var features = [];
+            //var numList = setListToInt(list)
+            //console.log("numList: ",numList)
+            for (let i =0;i<3;i++){
+                //console.log(typeof(list[i]))
+                //console.log("list: ",list[i])
+                //max
+                features.push(Math.max(...list[i]))
+                //min
+                features.push(Math.min(...list[i]))
+                //mean
+                features.push(findMean(list[i]))
+                //stan dev
+                features.push(findStanDev(list[i]))
+                //peaks 
+                features.push(peakFilter(list[i]))
+                //total acc
+                features.push(list[i].reduce((a, b) => a + Math.abs(b)));
+                //zero crossing rate 
+                features.push(zeroCrossingFilter(list[i]))
+                //root mean square 
+                features.push(Math.sqrt(list[i].reduce((a, b) => a + Math.pow(b, 2), 0) / list[i].length))
+            }
+            return features;
+        }
+        function findStanDev(list){
+            let mean = findMean(list)
+            let val = 0
+            for (let i=0;i<list.length;i++){
+                val = val +Math.pow(list[i]-mean, 2);
+            }
+            val = val/list.length
+            val = Math.pow(val, 0.5)
+            return val
+        }
+        function findMean(list){
+            let val = 0
+            for (let i=0;i<list.length;i++){
+                val=val+list[i]
+            }
+            val = val/list.length
+            return val
+        }
+        function zeroCrossingFilter(inValues){
+            let count = 0;
+            for (let i = 1; i < inValues.length; i++) {
+            if (
+                (inValues[i] >= 0 && inValues[i - 1] < 0) ||
+                (inValues[i] < 0 && inValues[i - 1] >= 0)
+            ) {
+                count++;
+            }
+            }
+            return count / (inValues.length - 1);
+
+        }
+        function peakFilter(inValues){
+            const lag = 5;
+            const threshold = 3.5;
+            const influence = 0.5;
+
+            let peaksCounter = 0;
+            //console.log("inValues: ",inValues)
+            if (inValues.length < lag + 2) {
+            throw new Error('data sample is too short');
+            }
+
+            // init variables
+            const signals = Array(inValues.length).fill(0);
+            const filteredY = inValues.slice(0);
+            const lead_in = inValues.slice(0, lag);
+
+            const avgFilter = [];
+            avgFilter[lag - 1] = findMean(lead_in);
+            const stdFilter = [];
+            stdFilter[lag - 1] = findStanDev(lead_in);
+
+            for (let i = lag; i < inValues.length; i++) {
+            if (
+                Math.abs(inValues[i] - avgFilter[i - 1]) > 0.1 &&
+                Math.abs(inValues[i] - avgFilter[i - 1]) > threshold * stdFilter[i - 1]
+            ) {
+                if (inValues[i] > avgFilter[i - 1]) {
+                signals[i] = +1; // positive signal
+                if (i - 1 > 0 && signals[i - 1] == 0) {
+                    peaksCounter++;
+                }
+                } else {
+                signals[i] = -1; // negative signal
+                }
+                // make influence lower
+                filteredY[i] = influence * inValues[i] + (1 - influence) * filteredY[i - 1];
+            } else {
+                signals[i] = 0; // no signal
+                filteredY[i] = inValues[i];
+            }
+
+            // adjust the filters
+            const y_lag = filteredY.slice(i - lag, i);
+            avgFilter[i] = findMean(y_lag);
+            stdFilter[i] = findStanDev(y_lag);
+            }
+            return peaksCounter;
+
+        }
+        
+//will probably need to add checks to make sure that the file is in the format that is it supposed to be 
+        dropEl.addEventListener("drop", event => {
+            console.log("double check");
+            let file = event.dataTransfer.files[0];
+            document.getElementById("inputFileMes").textContent = file.name;
+            //console.log(file);
+            //console.log(file.size);
+            reader = new FileReader()
+            reader.onload = function(event){
+                //console.log(reader.result);
+                array.push(reader.result)
+                
+            }
+            reader.readAsText(file)
+        });
+
+        ["drag", "dragstart", "dragend", "dragover", "dragenter", "dragleave", "drop"].forEach(eventName => {
+            dropEl.addEventListener(eventName, event => {
+                event.preventDefault();
+                event.stopPropagation();
+            });
+        });
+
+
+        ["dragover", "dragenter"].forEach(eventName => {
+            dropEl.addEventListener(eventName, event => {
+                dropEl.classList.add("hover");
+            });
+            //doesnt work as intended
+            document.getElementById("fileInputSpace").backgroundColor = "#2079BD";
+            document.getElementById("fileInputSpace").opacity = .5;
+        });
+
+        ["dragleave", "dragend", "drop"].forEach(eventName => {
+            dropEl.addEventListener(eventName, event => {
+                dropEl.classList.remove("hover");
+            });
+        });
+
+    </script>
+</html>
