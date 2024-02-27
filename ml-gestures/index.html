@@ -8,7 +8,7 @@
     <body>
 
         <div id ="content">
-            <h3 id = "subTitle">version 5</h3>
+            <h3 id = "subTitle">version 4</h3>
             <p id = "explanation">Create and train your model in https://ml-machine.org/. Save your model and then drag and drop your file into the box here.</p>
             <p>Current functionallity: Drag and drop the two files into the file drop space and then select the 'Create Blocks' button. The two files should be the .ts typescript file first, and then the .json file.</p>
             <p id ="testButton" onclick = "tryAddBlock()">Create Blocks</p>
@@ -21,6 +21,10 @@
         </div>
     </body>
     <script>
+        //so atm you put in dataset the parse
+        //then press write to create the .ts info 
+        //then drag and drop the jason
+        //last click create blocks button and hope
         let dropEl = document.getElementById("fileInputSpace");
         var extId = window.location.hash.substr(1);
         var array = [];
@@ -89,7 +93,7 @@
                 text = text +'handler();}}'
             
             
-            return event
+            return text
         }
         function writeEnum(text){
             let names = []
