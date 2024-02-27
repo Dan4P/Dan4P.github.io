@@ -13,6 +13,7 @@
             <p>Current functionallity: Drag and drop the two files into the file drop space and then select the 'Create Blocks' button. The two files should be the .ts typescript file first, and then the .json file.</p>
             <p id ="testButton" onclick = "tryAddBlock()">Create Blocks</p>
             <p id ="JSONButton" onclick = "parseJSON()">Parse JSON</p>
+            <p id ="writeButton" onclick = "writeMain()">write</p>
         </div>
         <div id = "fileInputSpace" >
                 <p id = "inputHereMes">Drag and drop files here</p>
@@ -60,6 +61,20 @@
             console.log("features: ", features)
             console.log("labels: ", labels)
             model = trainModel(features, labels, obj)
+        }
+        //start function to try writing code  for the main.ts file
+        //actually dont think i even need to write to a file here, think the code just gets passed as text anyway so it would be 
+        //writing text to a file just to then read that file back to text and send it 
+        function writeMain(){
+            let text = ""
+            text = writeBasic(text)
+            array.push(text)
+
+        }
+        function writeBase(text){
+
+            text = text +'namespace mlGesture { //%block export function showNew() {basic.showString("New block added");}}'
+            return text
         }
         function logData(obj){
             console.log(obj)
