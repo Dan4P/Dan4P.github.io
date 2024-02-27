@@ -43,12 +43,12 @@ a:link:hover{
     border: dashed;
     background-color: rgb(47, 75, 188);
 }
-#printModel{
+#writeButton{
     border: solid;
     background-color: rgb(52, 84, 209);
     color: white;
 }
-#printModel:hover{
+#writeButton:hover{
     border: dashed;
     background-color: rgb(47, 75, 188);
 }
