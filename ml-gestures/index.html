@@ -8,7 +8,7 @@
     <body>
 
         <div id ="content">
-            <h3 id = "subTitle">version 6</h3>
+            <h3 id = "subTitle">version 7</h3>
             <p id = "explanation">Create and train your model in https://ml-machine.org/. Save your model and then drag and drop your file into the box here.</p>
             <p>Current functionallity: Drag and drop the two files into the file drop space and then select the 'Create Blocks' button. The two files should be the .ts typescript file first, and then the .json file.</p>
             <p id ="testButton" onclick = "tryAddBlock()">Create Blocks</p>
@@ -30,6 +30,7 @@
         var array = [];
         let model = null;
         let obj = null;
+
 
         function tryAddBlock(){
             console.log("Try add block entered")
@@ -69,9 +70,8 @@
             model = trainModel(features, labels, obj)
             array = []
         }
-        //start function to try writing code  for the main.ts file
-        //actually dont think i even need to write to a file here, think the code just gets passed as text anyway so it would be 
-        //writing text to a file just to then read that file back to text and send it 
+        //drag and drop dataset file then click parse json button
+        //then press write button and then create blocks button before going back to the editor
         function writeMain(){
             console.log("enter writeMain")
             let text = ""
@@ -79,7 +79,37 @@
             text = writeEvent(text)
             console.log("text created: ",text)
             array.push(text)
+            //console.log(writeJson())
+            array.push(writeJson())
 
+        }
+        function writeJson(){
+            let jsonFile = {
+                "name": "pxt-addhello",
+                "description": "",
+                "dependencies": {
+                    "core": "*",
+                    "radio": "*",
+                    "microphone": "*"
+                },
+                "files": [
+                    "main.blocks",
+                    "main.ts"
+                ],
+                "testFiles": [
+                    "test.ts"
+                ],
+                "targetVersions": {
+                    "target": "6.0.25",
+                    "targetId": "microbit"
+                },
+                "supportedTargets": [
+                    "microbit"
+                ],
+                "preferredEditor": "tsprj"
+            }
+            //jsonFile = JSON.parse(jsonFile)
+            return jsonFile
         }
         function writeBasic(text){
 
@@ -98,7 +128,7 @@
         function writeEnum(text){
             let names = []
             for (let i = 0;i<obj.length;i++){
-                names.push(obj.name)
+                names.push(obj[i].name)
             }
             text = text+'enum GestureSet {\n'
             for (let i =0;i<names.length;i++)
