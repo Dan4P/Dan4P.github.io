@@ -76,7 +76,7 @@
         }
         function writeBasic(text){
 
-            text = text +'namespace mlGesture { //%block export function showNew() {basic.showString("New block added");}}'
+            text = text +'namespace mlGesture {\n //%block \nexport function showNew() {\nbasic.showString("New block added");}}'
             return text
         }
         function logData(obj){
