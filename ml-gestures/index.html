@@ -7,7 +7,7 @@
     </head>
     <body>
 
-        <div id ="content">
+        <div id ="version 2">
             <h3 id = "subTitle">Input Model</h3>
             <p id = "explanation">Create and train your model in https://ml-machine.org/. Save your model and then drag and drop your file into the box here.</p>
             <p>Current functionallity: Drag and drop the two files into the file drop space and then select the 'Create Blocks' button. The two files should be the .ts typescript file first, and then the .json file.</p>
@@ -42,6 +42,7 @@
                     json: JSON.stringify(array[1], null, 2)
                 }
             }
+            array=[]
             window.parent.postMessage(msg, "*")
         }
         //error you are currently getting is your values are being overwritten and min and max are returning null
@@ -66,12 +67,14 @@
         //actually dont think i even need to write to a file here, think the code just gets passed as text anyway so it would be 
         //writing text to a file just to then read that file back to text and send it 
         function writeMain(){
+            console.log("enter writeMain")
             let text = ""
             text = writeBasic(text)
+            console.log("text created: ",text)
             array.push(text)
 
         }
-        function writeBase(text){
+        function writeBasic(text){
 
             text = text +'namespace mlGesture { //%block export function showNew() {basic.showString("New block added");}}'
             return text
