@@ -8,7 +8,7 @@
     <body>
 
         <div id ="content">
-            <h3 id = "subTitle">version 3</h3>
+            <h3 id = "subTitle">version 4</h3>
             <p id = "explanation">Create and train your model in https://ml-machine.org/. Save your model and then drag and drop your file into the box here.</p>
             <p>Current functionallity: Drag and drop the two files into the file drop space and then select the 'Create Blocks' button. The two files should be the .ts typescript file first, and then the .json file.</p>
             <p id ="testButton" onclick = "tryAddBlock()">Create Blocks</p>
@@ -25,6 +25,7 @@
         var extId = window.location.hash.substr(1);
         var array = [];
         let model = null;
+        const obj = null;
 
         function tryAddBlock(){
             console.log("Try add block entered")
@@ -48,7 +49,7 @@
         //error you are currently getting is your values are being overwritten and min and max are returning null
         //seems like the values that you can see are correct
         function parseJSON(){
-            const obj = JSON.parse(array[0]);
+            obj = JSON.parse(array[0]);
             logData(obj);
             let [collected, labels] = collectData(obj)
             console.log(collected)
@@ -62,6 +63,7 @@
             console.log("features: ", features)
             console.log("labels: ", labels)
             model = trainModel(features, labels, obj)
+            array = []
         }
         //start function to try writing code  for the main.ts file
         //actually dont think i even need to write to a file here, think the code just gets passed as text anyway so it would be 
@@ -69,7 +71,8 @@
         function writeMain(){
             console.log("enter writeMain")
             let text = ""
-            text = writeBasic(text)
+            text = writeEnum(text)
+            text = writeEvent(text)
             console.log("text created: ",text)
             array.push(text)
 
@@ -77,6 +80,30 @@
         function writeBasic(text){
 
             text = text +'namespace mlGesture {\n //%block \nexport function showNew() {\nbasic.showString("New block added");}}'
+            return text
+        }
+        function writeEvent(text){
+            text = text +'namespace mlGesture {\n' 
+                text = text +'//% block="on event gesture %mode" \n'
+                text = text +' export function onEventGesture(mode: GestureSet, handler: () => void) {\n'
+                text = text +'handler();}}'
+            
+            
+            return event
+        }
+        function writeEnum(text){
+            let names = []
+            for (let i = 0;i<obj.length;i++){
+                names.push(obj.name)
+            }
+            text = text+'enum GestureSet {\n'
+            for (let i =0;i<names.length;i++)
+            {
+                text = text+'//% block="'+names[i] +'"\n'
+                text = text+ 'Gesture'+i+',\n'
+            }
+            text = text+'}\n'
+
             return text
         }
         function logData(obj){
