@@ -3,20 +3,19 @@
     <head>
         <title>Input Model</title>
         <link rel="stylesheet" href ="index.css">
-        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"> </script>
     </head>
     <body>
 
         <div id ="content">
-            <h3 id = "subTitle">version 7</h3>
+            <h3 id = "subTitle">version </h3>
             <p id = "explanation">Create and train your model in https://ml-machine.org/. Save your model and then drag and drop your file into the box here.</p>
-            <p>Current functionallity: Drag and drop the two files into the file drop space and then select the 'Create Blocks' button. The two files should be the .ts typescript file first, and then the .json file.</p>
-            <p id ="testButton" onclick = "tryAddBlock()">Create Blocks</p>
-            <p id ="JSONButton" onclick = "parseJSON()">Parse JSON</p>
-            <p id ="writeButton" onclick = "writeMain()">write</p>
+            <p>Current functionality: drag and drop the JSON data file into the box and click train model</p>
+            <p>Once the model is ready click the create blocks button</p>
+            <p id ="JSONButton" onclick = "parseJSON()">Train model</p>
+            <p id ="writeButton" onclick = "writeMain()">Model not Ready</p>
         </div>
-        <div id = "fileInputSpace" >
-                <p id = "inputHereMes">Drag and drop files here</p>
+        <div id = "fileInputSpace" >8 here</p>
                 <p id = "inputFileMes">Empty</p>
         </div>
     </body>
@@ -30,6 +29,10 @@
         var array = [];
         let model = null;
         let obj = null;
+        
+        
+        
+        
 
 
         function tryAddBlock(){
@@ -54,6 +57,7 @@
         //error you are currently getting is your values are being overwritten and min and max are returning null
         //seems like the values that you can see are correct
         function parseJSON(){
+            document.getElementById("writeButton").innerHTML = "Training...";
             obj = JSON.parse(array[0]);
             logData(obj);
             let [collected, labels] = collectData(obj)
@@ -68,6 +72,7 @@
             console.log("features: ", features)
             console.log("labels: ", labels)
             model = trainModel(features, labels, obj)
+            console.log(typeof(model))
             array = []
         }
         //drag and drop dataset file then click parse json button
@@ -81,6 +86,7 @@
             array.push(text)
             //console.log(writeJson())
             array.push(writeJson())
+            tryAddBlock()
 
         }
         function writeJson(){
@@ -152,6 +158,7 @@
 
         }
         async function trainModel(features, labels, obj){
+            
             const tensorFeatures = tf.tensor(features);
             const tensorLabels = tf.tensor(labels);
 
@@ -159,7 +166,7 @@
             const inputShape = [24];
 
             const input = tf.input({ shape: inputShape });
-            //console.log("input: ",input)
+            console.log("input: ",input)
             const normalizer = tf.layers.batchNormalization().apply(input);
             const dense = tf.layers
             .dense({ units: 16, activation: 'relu' })
@@ -187,7 +194,12 @@
                 return Promise.reject(err);
             });
             console.log("model Trained")
+            document.getElementById("writeButton").innerHTML = "Create Blocks";
+
             console.log("model: ",model)
+            //C:/Users/dprit/OneDrive/Documents/Uni/Year4/SCC419/code/EditorExtensionPage/baseWebsite/ml-gestures/
+            const save =  await model.save('downloads://my-model');
+            console.log("model downloaded")
             return Promise.resolve(model);
         }
         //can make another function called collect records that will get the data from the JSON in the correct format for the apply filters function 
