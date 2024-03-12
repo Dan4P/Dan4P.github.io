@@ -54,8 +54,7 @@
             array=[]
             window.parent.postMessage(msg, "*")
         }
-        //error you are currently getting is your values are being overwritten and min and max are returning null
-        //seems like the values that you can see are correct
+
         function parseJSON(){
             document.getElementById("writeButton").innerHTML = "Training...";
             obj = JSON.parse(array[0]);
