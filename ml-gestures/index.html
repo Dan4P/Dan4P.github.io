@@ -79,8 +79,7 @@
         function writeMain(){
             console.log("enter writeMain")
             let text = ""
-            text = writeEnum(text)
-            text = writeEvent(text)
+            text = writeBlocks(text)
             console.log("text created: ",text)
             array.push(text)
             //console.log(writeJson())
@@ -125,9 +124,46 @@
             text = text +'namespace mlGesture {\n' 
                 text = text +'//% block="on event gesture %mode" \n'
                 text = text +' export function onEventGesture(mode: GestureSet, handler: () => void) {\n'
-                text = text +'handler();}}'
-            
-            
+                text = text +'handler();}}\n'
+            return text
+        }
+        function writeBlocks(text){
+            numOfBlocks = obj.length
+            text = text+ 'function emfun(){};\n'
+            text = text +writePlaceHolders(text, numOfBlocks)
+            text = text +'namespace mlGesture {\n'
+            for (let i=0;i<numOfBlocks;i++){
+                text = text+writeBlock(text, i)
+            }
+            text = text+'}\n'
+            text = text + writeForeverLoop(text, numOfBlocks)
+            return text
+        }
+        function writePlaceHolders(text, num){
+            for (let i=0;i<num;i++){
+                text = text+'let gesHand'+i+' = emfun;\n'
+            }
+            return text
+        }
+        function writeBlock(text, inedx){
+            text = text +'//% block="on event gesture '+index+' \n'
+            text = text +' export function onEventGesture'+index+'( handler: () => void) {\n'
+            text = text +'gesHand'+index+' = handler;}\n'
+
+            return text
+        }
+        function writeForeverLoop(text, num){
+            text = text+'basic.forever(function(){\n'
+            text = text+'let num = Math.random()\n'
+            text = text+'let gesNum = Math.round(num%2)'
+            text = text+writeLoopIfs(text, num)
+            text = text+'basic.pause(1000)\n'
+            return text
+        }
+        function writeLoopIfs(text,num){
+            for (leti=0;i<num;i++){
+                text = text +'if (gesNum=='+i+')gesHand'+i+'()\n'
+            }
             return text
         }
         function writeEnum(text){
@@ -196,7 +232,7 @@
             document.getElementById("writeButton").innerHTML = "Create Blocks";
 
             console.log("model: ",model)
-            //C:/Users/dprit/OneDrive/Documents/Uni/Year4/SCC419/code/EditorExtensionPage/baseWebsite/ml-gestures/
+
             const save =  await model.save('downloads://my-model');
             console.log("model downloaded")
             return Promise.resolve(model);
@@ -344,7 +380,6 @@
 
         }
         
-//will probably need to add checks to make sure that the file is in the format that is it supposed to be 
         dropEl.addEventListener("drop", event => {
             console.log("double check");
             let file = event.dataTransfer.files[0];
