@@ -154,9 +154,9 @@
         }
         function writeForeverLoop(text, num){
             text = text+'basic.forever(function(){\n'
-            text = text+'let num = Math.random()\n'
-            text = text+'let gesNum = Math.round(num%2)\n'
-            text = writeLoopIfs(text, num)
+            //text = text+'let num = Math.random()\n'
+            //text = text+'let gesNum = Math.round(num%2)\n'
+            //text = writeLoopIfs(text, num)
             text = text+'basic.pause(1000)})\n'
             return text
         }
