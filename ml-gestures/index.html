@@ -128,43 +128,31 @@
             return text
         }
         function writeBlocks(text){
-            console.log("write blocks entered")
             numOfBlocks = obj.length
             text = text+ 'function emfun(){};\n'
-            console.log("text1: "+text)
             text = writePlaceHolders(text, numOfBlocks)
-            console.log("text2: "+text)
             text = text +'namespace mlGesture {\n'
             text =  writeBlock(text, numOfBlocks)
-            console.log("text3: "+text)
             text = text+'}\n'
             text =  writeForeverLoop(text, numOfBlocks)
-            console.log("text4: "+text)
             return text
         }
         function writePlaceHolders(text, num){
-            console.log("write place holders entered")
             for (let i=0;i<num;i++){
                 text = text+'let gesHand'+i+' = emfun;\n'
             }
             return text
         }
         function writeBlock(text, index){
-            console.log("write block entered")
             for (let i =0;i<index;i++)
             {
-                console.log("new block")
                 text = text +'//% block="on event gesture '+i+'" \n'
-                console.log("text: "+text)
                 text = text +' export function onEventGesture'+i+'( handler: () => void) {\n'
-                console.log("text: "+text)
                 text = text +'gesHand'+i+' = handler;}\n'
-                console.log("text: "+text)
             }
             return text
         }
         function writeForeverLoop(text, num){
-            console.log("write forever entered")
             text = text+'basic.forever(function(){\n'
             text = text+'let num = Math.random()\n'
             text = text+'let gesNum = Math.round(num%2)\n'
@@ -173,7 +161,6 @@
             return text
         }
         function writeLoopIfs(text,num){
-            console.log("write loop if entered")
             for (let i=0;i<num;i++){
                 text = text +'if (gesNum=='+i+')gesHand'+i+'()\n'
             }
