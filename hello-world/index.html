@@ -9,7 +9,7 @@
         <div id ="content">
             <h3 id = "subTitle">Input Model</h3>
             <p id = "explanation">Create and train your model in https://ml-machine.org/. Save your model and then drag and drop your file into the box here.</p>
-            <p>Current functionallity: Drag and drop the two files into the file drop space and then select the 'Create Blocks' button. The two files should be the .ts typescript file first, and then the .json file.</p>
+            <p>Current functionallity: click create blocks and then retun to editor and new block should be there</p>
             <p id ="testButton" onclick = "tryAddBlock()">Create Blocks</p>
         </div>
         <div id = "fileInputSpace" >
@@ -21,7 +21,7 @@
         let dropEl = document.getElementById("fileInputSpace");
         var extId = window.location.hash.substr(1);
         var array = [];
-
+//function to send info back to the editor and create blocks 
         function tryAddBlock(){
             console.log("Try add block entered")
             
@@ -54,6 +54,7 @@
             text = text + '}\n'
             return text
         }
+        //function to write code to create json file for config details 
         function addJson(){
             let jsonFile = {
                 "name": "pxt-addhello",
@@ -83,7 +84,7 @@
             return jsonFile
         }
 
-//will probably need to add checks to make sure that the file is in the format that is it supposed to be 
+//drag and drop code 
         dropEl.addEventListener("drop", event => {
             console.log("double check");
             let file = event.dataTransfer.files[0];
