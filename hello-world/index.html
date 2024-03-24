@@ -24,9 +24,10 @@
 
         function tryAddBlock(){
             console.log("Try add block entered")
-            //trying for communication between editor and extension 
             console.log(array[0])
             console.log(array[1])
+            let mainText = writeMain()
+            let jsonText = writeJson()
             var msg = {
                 id: Math.random().toString(),
                 type: "pxtpkgext",
@@ -34,12 +35,51 @@
                 extId: extId,
                 response: "true",
                 body: {
-                    code: array[0],
-                    json: JSON.stringify(array[1], null, 2)
+                    code: mainText,
+                    json: JSON.stringify(jsonText, null, 2)
                 }
             }
             window.parent.postMessage(msg, "*")
             
+        }
+        //adding functions to write code in webpage to show another way to do it 
+        function addMain(){
+            let text = ''
+            text = text + 'namespace hello {\n'
+            text = text + '//%block\n'
+            text = text + 'export function showNew() {\n'
+            text = text + 'basic.showString("New block added");\n'
+            text = text + '}\n'
+            text = text + '}\n'
+            return text
+        }
+        function writeJson(){
+            let jsonFile = {
+                "name": "pxt-addhello",
+                "description": "",
+                "dependencies": {
+                    "core": "*",
+                    "radio": "*",
+                    "microphone": "*"
+                },
+                "files": [
+                    "main.blocks",
+                    "main.ts"
+                ],
+                "testFiles": [
+                    "test.ts"
+                ],
+                "targetVersions": {
+                    "target": "6.0.25",
+                    "targetId": "microbit"
+                },
+                "supportedTargets": [
+                    "microbit"
+                ],
+                "preferredEditor": "tsprj"
+            }
+            //jsonFile = JSON.parse(jsonFile)
+            return jsonFile
         }
 
 //will probably need to add checks to make sure that the file is in the format that is it supposed to be 
