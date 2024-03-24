@@ -24,10 +24,11 @@
 
         function tryAddBlock(){
             console.log("Try add block entered")
-            console.log(array[0])
-            console.log(array[1])
+
             let mainText = writeMain()
             let jsonText = writeJson()
+            console.log(mainText)
+            console.log(jsonText)
             var msg = {
                 id: Math.random().toString(),
                 type: "pxtpkgext",
