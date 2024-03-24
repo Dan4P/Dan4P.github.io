@@ -8,7 +8,7 @@
     <body>
 
         <div id ="content">
-            <h3 id = "subTitle">version 2</h3>
+            <h3 id = "subTitle">version 3</h3>
             <p id = "explanation">Create and train your model in https://ml-machine.org/. Save your model and then drag and drop your file into the box here.</p>
             <p>Current functionality: drag and drop the JSON data file into the box and click train model</p>
             <p>Once the model is ready click the create blocks button</p>
@@ -20,10 +20,13 @@
         </div>
     </body>
     <script>
-        //so atm you put in dataset the parse
-        //then press write to create the .ts info 
-        //then drag and drop the jason
-        //last click create blocks button and hope
+        /*
+        current functionality 
+        drag and drop .json data set file from ml machine
+        click train model 
+        wait until second button says create blocks then click 
+        then go back to main editor page and new even blocks based on gestures should be there 
+        */
         let dropEl = document.getElementById("fileInputSpace");
         var extId = window.location.hash.substr(1);
         var array = [];
@@ -33,11 +36,10 @@
         
         
         
-
+//function that sends message to the editor to create the blocks  
 
         function tryAddBlock(){
             console.log("Try add block entered")
-            //trying for communication between editor and extension 
             console.log(array[0])
             console.log(array[1])
             var msg = {
@@ -54,7 +56,7 @@
             array=[]
             window.parent.postMessage(msg, "*")
         }
-
+        //gather data from the .json data set 
         function parseJSON(){
             document.getElementById("writeButton").innerHTML = "Training...";
             obj = JSON.parse(array[0]);
@@ -74,8 +76,7 @@
             console.log(typeof(model))
             array = []
         }
-        //drag and drop dataset file then click parse json button
-        //then press write button and then create blocks button before going back to the editor
+        //start off writing the code for to create the blocks
         function writeMain(){
             console.log("enter writeMain")
             let text = ""
@@ -87,6 +88,7 @@
             tryAddBlock()
 
         }
+        //write neccessary JSON file for config info
         function writeJson(){
             let jsonFile = {
                 "name": "pxt-addgestures",
@@ -115,6 +117,8 @@
             //jsonFile = JSON.parse(jsonFile)
             return jsonFile
         }
+        //separated into different functions to make it easy to swap out functions for different functinality 
+        //functions currently in use are writeBlocks, writeBlock, writePlaceHolders, writeForeverLoop
         function writeBasic(text){
 
             text = text +'namespace mlGesture {\n //%block \nexport function showNew() {\nbasic.showString("New block added");}}'
@@ -127,6 +131,7 @@
                 text = text +'handler();}}\n'
             return text
         }
+       //write starting code to make the event blocks 
         function writeBlocks(text){
             numOfBlocks = obj.length
             text = text+ 'function emfun(){};\n'
@@ -137,21 +142,26 @@
             text =  writeForeverLoop(text, numOfBlocks)
             return text
         }
+        //creats empty functions so that handlers can be called in the forever loop
         function writePlaceHolders(text, num){
             for (let i=0;i<num;i++){
                 text = text+'let gesHand'+i+' = emfun;\n'
             }
             return text
         }
+        //writes an many event blocks as gestures were input into the editor extension 
         function writeBlock(text, index){
             for (let i =0;i<index;i++)
             {
-                text = text +'//% block="on event gesture '+i+'" \n'
+                text = text +'//% block="on event gesture '+obj[i].name+'" \n'
                 text = text +' export function onEventGesture'+i+'( handler: () => void) {\n'
                 text = text +'gesHand'+i+' = handler;}\n'
             }
             return text
         }
+        //writes the forever loop that triggers the event blocks 
+        //initially used Math.random to randomise which block is triggerd, but did not seem to like using the Math functions
+        //Math functions did work in the MakeCode blocks playground 
         function writeForeverLoop(text, num){
             text = text+'basic.forever(function(){\n'
             for (let i=0;i<num;i++){
@@ -164,6 +174,7 @@
             text = text+'basic.pause(1000)})\n'
             return text
         }
+        //no longer used as not triggering random gestures 
         function writeLoopIfs(text,num){
             for (let i=0;i<num;i++){
                 text = text +'if (gesNum=='+i+')gesHand'+i+'()\n'
@@ -185,6 +196,7 @@
 
             return text
         }
+        //part of parsing data 
         function logData(obj){
             console.log(obj)
             for (let i=0;i<obj.length;i++){
@@ -241,8 +253,7 @@
             console.log("model downloaded")
             return Promise.resolve(model);
         }
-        //can make another function called collect records that will get the data from the JSON in the correct format for the apply filters function 
-        //want this to output a 2D array 1[x,y,z], 2[x,y,z], 3[x,y,z]...
+        
         function collectData(obj){
             var collection = [];
             let labels =[];//new Array(obj.length);
