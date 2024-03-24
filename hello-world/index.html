@@ -24,9 +24,9 @@
 
         function tryAddBlock(){
             console.log("Try add block entered")
-
-            let mainText = writeMain()
-            let jsonText = writeJson()
+            
+            let mainText = addMain()
+            let jsonText = addJson()
             console.log(mainText)
             console.log(jsonText)
             var msg = {
@@ -54,7 +54,7 @@
             text = text + '}\n'
             return text
         }
-        function writeJson(){
+        function addJson(){
             let jsonFile = {
                 "name": "pxt-addhello",
                 "description": "",
